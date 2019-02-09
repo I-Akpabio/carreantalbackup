@@ -2,14 +2,14 @@ import React from 'react'
 
 import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import HeaderButtons from "react-navigation-header-buttons"
-import { HeaderButton } from 'react-navigation-header-buttons';
+import { HeaderButton } from 'react-navigation-header-buttons'
 import { NavigationScreenProps } from "react-navigation/index"
 import { Params }  from "../../interfaces"
 
-import ServicesScreen from './ServicesScreen'
+import { ServicesNavigator } from './ServicesScreen'
 import PostJobScreen from './PostJobScreen';
 
 import { IThoseProps } from "../../interfaces"
@@ -20,7 +20,7 @@ const MaterialHeaderButton = (props: any) => (
 
 const TabNavigator = createBottomTabNavigator(
   {
-    Services: ServicesScreen,
+    Services: ServicesNavigator,
     PostJob: PostJobScreen,
   },
 
@@ -42,13 +42,13 @@ const TabNavigator = createBottomTabNavigator(
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'blue',
+      activeTintColor: '#3700B3',
       inactiveTintColor: 'gray',
     },
   }
 );
 
-class Home extends React.Component {
+class Home extends React.Component<any, any> {
   static navigationOptions = ({navigation}: NavigationScreenProps<Params>) => ({
     title: "Home",
     headerLeft: (

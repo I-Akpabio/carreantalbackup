@@ -1,9 +1,12 @@
 export interface IPostJobState {
-  language: any;
+  item: any;
+  subItem: any;
   title: any;
   jobDesc: any;
   date: any;
   time: any;
+  items: any;
+  subItems: any;
 }
 
 export interface IEmailProps {

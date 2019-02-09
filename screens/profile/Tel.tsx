@@ -61,38 +61,37 @@ const Tel : React.SFC<ITelProps> = ({
   onPressTel,
 }) => {
   return (
-    <TouchableOpacity onPress={() => onPressTel(number)}>
-      <View style={[styles.container, containerStyle]}>
-        <View style={styles.iconRow}>
-          {+index === 0 && (
-            <Icon
-              name="call"
-              underlayColor="transparent"
-              iconStyle={styles.telIcon}
-              onPress={() => onPressTel(number)}
-            />
+   
+    <View style={[styles.container, containerStyle]}>
+      <View style={styles.iconRow}>
+        {+index === 0 && (
+          <Icon
+            name="call"
+            underlayColor="transparent"
+            iconStyle={styles.telIcon}
+            //onPress={() => onPressTel(number)}
+          />
+        )}
+      </View>
+      <View style={styles.telRow}>
+        <View style={styles.telNumberColumn}>
+          <Text style={styles.telNumberText}>{number}</Text>
+        </View>
+        <View style={styles.telNameColumn}>
+          {name.trim().length !== 0 && (
+            <Text style={styles.telNameText}>{name}</Text>
           )}
         </View>
-        <View style={styles.telRow}>
-          <View style={styles.telNumberColumn}>
-            <Text style={styles.telNumberText}>{number}</Text>
-          </View>
-          <View style={styles.telNameColumn}>
-            {name.trim().length !== 0 && (
-              <Text style={styles.telNameText}>{name}</Text>
-            )}
-          </View>
-        </View>
-        <View style={styles.smsRow}>
-          <Icon
-            name="textsms"
-            underlayColor="transparent"
-            iconStyle={styles.smsIcon}
-            onPress={() => onPressSms()}
-          />
-        </View>
       </View>
-    </TouchableOpacity>
+      <View style={styles.smsRow}>
+        <Icon
+          name="textsms"
+          underlayColor="transparent"
+          iconStyle={styles.smsIcon}
+          onPress={() => onPressSms()}
+        />
+      </View>
+    </View>
   )
 }
 

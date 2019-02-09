@@ -1,15 +1,7 @@
 import React from 'react'
 import { Component } from 'react';
 import { Card, Icon } from 'react-native-elements'
-import {
-  Image,
-  ImageBackground,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Image, ImageBackground, Linking, ScrollView, StyleSheet, Text, View, Alert } from 'react-native'
 
 import { FlatList } from 'react-native'
 
@@ -20,6 +12,8 @@ import Separator from './Separator'
 import Tel from './Tel'
 
 import { IProfileProps } from "../../interfaces";
+
+import { Api } from "../../utils/Api";
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -90,6 +84,39 @@ const styles = StyleSheet.create({
 
 class Contact extends Component<IProfileProps, any> {
 
+  api: Api = new Api();
+
+  constructor( props: IProfileProps ) {
+    super(props);
+
+    this.state = {
+      data: null
+    };
+  }
+
+  componentDidMount() {
+    this.api.post("getprofile")
+    .then((res) => {
+      this.setState({
+        data: {
+          name: res.name,
+          city: res.city,
+          country: res.country,
+          tels: [
+            { "id": 1, "name": "Mobile", "number": res.mobile }, 
+            { "id": 2, "name": "E-mail", "number": res.email }
+           ],
+          emails: [
+            { "id": 1, "name": "Address", "email": res.address },
+            { "id": 2, "name": "City", "email": res.city },
+            { "id": 3, "name": "Pincode", "email": res.postal },
+            { "id": 4, "name": "Country", "email": res.country }
+          ]
+        }
+      });
+    });
+  }
+
   renderTelItem(row: any) {
     const item = row.item;
     const index = row.index;
@@ -140,8 +167,10 @@ class Contact extends Component<IProfileProps, any> {
       avatar,
       avatarBackground,
       name,
-      address: { city, country },
+      //address: { city, country },
     } = this.props
+
+    const { city, country } = this.state.data;
 
     return (
       <View style={styles.headerContainer}>
@@ -159,7 +188,7 @@ class Contact extends Component<IProfileProps, any> {
                 uri: avatar,
               }}
             />
-            <Text style={styles.userNameText}>{name}</Text>
+            <Text style={styles.userNameText}>{this.state.data.name}</Text>
             <View style={styles.userAddressRow}>
               <View>
                 <Icon
@@ -171,7 +200,7 @@ class Contact extends Component<IProfileProps, any> {
               </View>
               <View style={styles.userCityRow}>
                 <Text style={styles.userCityText}>
-                  {city}, {country}
+                  { city }, { country }
                 </Text>
               </View>
             </View>
@@ -181,18 +210,18 @@ class Contact extends Component<IProfileProps, any> {
     )
   }
 
-  renderTel = () => (
+  renderTel = (tels: any) => (
     <FlatList 
-      data={this.props.tels}
+      data={tels}
       renderItem={this.renderTelItem}
       contentContainerStyle={styles.emailContainer}
       keyExtractor={(item, index) => index.toString()}
     />
   )
 
-  renderEmail = () => (
+  renderEmail = (emails: any) => (
    <FlatList 
-      data={this.props.emails}
+      data={emails}
       renderItem={this.renderEmailItem}
       contentContainerStyle={styles.emailContainer}
       keyExtractor={(item, index) => index.toString()}
@@ -200,18 +229,27 @@ class Contact extends Component<IProfileProps, any> {
   )
 
   render() {
-    return (
+    if(this.state.data === null) {
+      return (
+        <View>
+          <Text>Loading</Text>  
+        </View>
+        
+      );
+    } else {
+       return (
       <ScrollView style={styles.scroll}>
         <View style={styles.container}>
           <Card containerStyle={styles.cardContainer}>
             {this.renderHeader()}
-            {this.renderTel()}
+            {this.renderTel(this.state.data.tels)}
             {Separator()}
-            {this.renderEmail()}
+            {this.renderEmail(this.state.data.emails)}
           </Card>
         </View>
       </ScrollView>
     )
+    }
   }
 }
 

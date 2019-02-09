@@ -1,0 +1,10 @@
+{
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "cSpell.words": [
+        "getservices",
+        "getsubservices",
+        "jobid",
+        "subjobid",
+        "timepicker"
+    ]
+}

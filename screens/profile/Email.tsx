@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 })
 
 const Email: React.SFC<IEmailProps> = ({ containerStyle, onPressEmail, name, email, index }) => (
-  <TouchableOpacity onPress={() => onPressEmail(email)}>
+ 
     <View style={[styles.container, containerStyle]}>
       <View style={styles.iconRow}>
         {+index === 0 && (
@@ -53,7 +53,7 @@ const Email: React.SFC<IEmailProps> = ({ containerStyle, onPressEmail, name, ema
             name="email"
             underlayColor="transparent"
             iconStyle={styles.emailIcon}
-            onPress={() => onPressEmail()}
+            //onPress={() => onPressEmail()}
           />
         )}
       </View>
@@ -68,7 +68,7 @@ const Email: React.SFC<IEmailProps> = ({ containerStyle, onPressEmail, name, ema
         </View>
       </View>
     </View>
-  </TouchableOpacity>
+
 )
 
 Email.defaultProps = {

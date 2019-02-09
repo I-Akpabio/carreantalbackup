@@ -1,15 +1,18 @@
 import React from 'react';
+import { createStackNavigator, createAppContainer } from "react-navigation";
 
-import { Text, View } from 'react-native';
+import { ServiceList } from "./pages/ServiceList";
+import { ServiceSubList } from "./pages/ServiceSubList";
 
-class ServicesScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Services!</Text>
-      </View>
-    );
-  }
-}
-
-export default ServicesScreen;
+export const ServicesNavigator = createStackNavigator(
+{
+    ServiceList: ServiceList,
+    ServiceSubList: ServiceSubList
+}, 
+{
+    initialRouteName: "ServiceList",
+    headerMode: 'none',
+    navigationOptions: {
+        header: null
+    }
+});

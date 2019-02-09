@@ -11,7 +11,7 @@ import { NavigationStackScreenOptions } from "react-navigation/index"
 
 const defaultNavigationOptions: NavigationStackScreenOptions = {
   headerStyle: {
-    backgroundColor: '#f4511e',
+    backgroundColor: '#6200EE',
   },
   headerTintColor: '#fff',
   headerTitleStyle: {
@@ -79,6 +79,10 @@ const TabsInDrawer = createDrawerNavigator({
       ),
     },
   },
+},
+
+{
+  "initialRouteName": "PostedScreen"
 });
 
 export default createAppContainer(TabsInDrawer);
