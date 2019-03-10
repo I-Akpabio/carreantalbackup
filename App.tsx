@@ -5,9 +5,16 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Home from './screens/home'
 import Posted from './screens/posted'
 import Profile from './screens/profile'
+import { Job } from './screens/job'
 
 // Types
 import { NavigationStackScreenOptions } from "react-navigation/index"
+
+class Hidden extends React.Component {
+  render() {
+    return null;
+  }
+}
 
 const defaultNavigationOptions: NavigationStackScreenOptions = {
   headerStyle: {
@@ -49,6 +56,16 @@ const RootStack3 = createStackNavigator(
   }
 );
 
+const RootStack4 = createStackNavigator(
+  {
+    Home: Job,
+  },
+  {
+    initialRouteName: 'Home',
+    defaultNavigationOptions
+  }
+);
+
 const TabsInDrawer = createDrawerNavigator({
   HomeScreen: {
     screen: RootStack1,
@@ -79,6 +96,13 @@ const TabsInDrawer = createDrawerNavigator({
       ),
     },
   },
+
+  JobScreen: {
+    screen: RootStack4,
+    navigationOptions: {
+      drawerLabel: <Hidden />
+    },
+  }
 },
 
 {

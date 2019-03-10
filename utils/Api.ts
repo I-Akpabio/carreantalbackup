@@ -4,6 +4,10 @@ export class Api {
 
 	url: string = "http://192.168.137.1/handy/";
 
+	getURL(){
+		return this.url;
+	}
+
 	post(url: string, data: string = "", error = null) {
 		return fetch(this.url + url, {
     		method: 'POST',

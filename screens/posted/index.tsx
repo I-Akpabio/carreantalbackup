@@ -16,7 +16,7 @@ const MaterialHeaderButton = (props: any) => (
   <HeaderButton {...props} IconComponent={MaterialIcons} iconSize={23} color="white" />
 );
 
-class Posted extends React.Component {
+class Posted extends React.Component<any, any> {
 
   api: Api; // Api object for connecting
 
@@ -50,17 +50,24 @@ class Posted extends React.Component {
     });
   }
 
-  navigateToJob = (id) => {
-    Alert.alert("ID", id);
+  navigateToJob = (id: any) => {
+    this.props.navigation.navigate("JobScreen", {id: id});
   }
 
-  renderItem(item) {
+  renderItem(item: any) {
+    let Tag
+    if(item.handyman_id === "0") {
+      Tag = <Text style={styles.tag}>Job Not Assigned</Text>
+    } else {
+      Tag = <Text style={styles.redTag}>Job Assigned</Text>
+    }
     return (
       <TouchableOpacity onPress={() => this.navigateToJob(item.id)}>
         <View style={styles.listContainer}>
           <View style={{flex: 1, flexDirection: 'row'}}>
             <Icon name="ios-settings" size={50}></Icon>
             <Text style={{color: 'black', fontSize: 19}}>{item.title}</Text>
+            { Tag }
           </View>
           <View style={{flex: 1, flexDirection: 'row'}}>
             <Text style={{width: "50%", fontSize: 16}}>Date: {item.job_date}</Text>
@@ -98,7 +105,25 @@ const styles = StyleSheet.create({
   },
 
   listContainer: {
-    marginBottom: 10
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'silver',
+  },
+
+  tag: {
+    position: 'absolute', 
+    right: 0, 
+    color: 'white', 
+    backgroundColor: 'orange',
+    padding: 4
+  },
+
+  redTag: {
+    position: 'absolute', 
+    right: 0, 
+    color: 'white', 
+    backgroundColor: 'green',
+    padding: 4
   }
 
 });

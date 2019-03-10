@@ -13,6 +13,7 @@
     "react-native": "0.57.8",
     "react-native-elements": "^1.0.0-beta7",
     "react-native-gesture-handler": "^1.0.12",
+    "react-native-maps": "^0.23.0",
     "react-native-super-grid": "^2.4.4",
     "react-native-vector-icons": "^6.1.0",
     "react-navigation": "^3.0.9",
