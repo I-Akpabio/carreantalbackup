@@ -109,6 +109,18 @@ export class Job extends React.Component<any, any> {
     this.setState({ markers, selected });
   };
 
+  onPressCall = (number: any) => {
+    Linking.openURL(`tel://${number}`).catch(err => console.log('Error:', err))
+  }
+
+  onPressSms = (number: any) => {
+    Linking.openURL(`sms://${number}`).catch(err => console.log('Error:', err))
+  }
+
+  onPressEmail = (email: any) => {
+    Linking.openURL(`mailto://${email}?subject=subject&body=body`).catch(err =>console.log('Error:', err))
+  }
+
   render() {
     if (this.state.data === null) {
       return <Text>Loading....</Text>;
@@ -151,14 +163,39 @@ export class Job extends React.Component<any, any> {
         </View>
 
         {selected !== null ? (
-          <Card title={selected.companyname} image={{ uri: selected.image1 }}>
-            <Text style={{ marginBottom: 10 }}>{selected.bio}</Text>
+          <Card title={selected.companyname} titleStyle={styles.cardTitle} image={{ uri: selected.image1 }}>
+            <Text style={styles.amount}>N 2000</Text>
+            <Text style={styles.bio}>{selected.bio}</Text>
             {selected.provider === true ? (
-              <View>
-                  <Button onPress={() => Linking.openURL(`tel://08023308469`).catch(err => console.log('Error:', err))} 
-                  icon={<NIcon name="code" color="#ffffff" />} backgroundColor="#03A9F4" title="Call" />
-                  <Button onPress={() => alert("msg")} icon={<NIcon name="code" color="#ffffff" />} backgroundColor="#03A9F4" title="Message" />
-                  <Button onPress={() => alert("email")} icon={<NIcon name="code" color="#ffffff" />} backgroundColor="#03A9F4" title="Email" />
+              <View style={styles.topContainer}>
+
+                <View style={styles.buttonContainer}>
+                  <Button 
+                    onPress={() => this.onPressCall("08023308469")} 
+                    icon={<NIcon name='phone' type='font-awesome' color="#ffffff" />} 
+                    backgroundColor="#03A9F4" 
+                    title="Call" 
+                   />
+                    </View>
+
+                   <View style={styles.buttonContainer}>
+                  <Button 
+                    onPress={() => this.onPressSms("08023308469")} 
+                    icon={<NIcon name="sms" color="#ffffff" />} 
+                    backgroundColor="#03A9F4" 
+                    title="Message" 
+                   />
+                    </View>
+
+
+                   <View style={styles.buttonContainer}>
+                  <Button 
+                    onPress={() => this.onPressEmail("inyeneobong_akpabio@hotmail.com")} 
+                    icon={<NIcon name="envelope" type='font-awesome' color="#ffffff" />} 
+                    backgroundColor="#03A9F4" 
+                    title="Email" 
+                   />
+                    </View>
               </View>
             ) : (
               <Button
@@ -191,5 +228,24 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject
+  },
+  topContainer: {
+    flexDirection: 'row',
+  },
+  buttonContainer: {
+    margin: 5,
+    flex: 1,
+  },
+  amount: {
+    color: 'green',
+    fontSize: 28,
+    textAlign: 'right'
+  },
+  bio: {
+    marginBottom: 10,
+    fontSize: 20 
+  },
+  titleStyle: {
+    fontSize: 20
   }
 });
