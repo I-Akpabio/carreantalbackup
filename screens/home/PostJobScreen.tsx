@@ -16,12 +16,12 @@ class PostJobScreen extends React.Component <any, IPostJobState> {
         super(props);
 
         this.state = { 
-            item: '', 
-            subItem: '', 
+            item: '1', 
+            subItem: '1', 
             title: '', 
             jobDesc: '', 
-            date: '', 
-            time: '', 
+            date: '2019-02-20', 
+            time: '14:00', 
             items: [], 
             subItems: null 
         };
@@ -141,22 +141,31 @@ class PostJobScreen extends React.Component <any, IPostJobState> {
     }
 
     submit = () => {
+        alert("Here");
         const s = this.state;
         const data = `item=${s.item}&subitem=${s.subItem}&title=${s.title}&date=${s.date}&time=${s.time}&desc=${s.jobDesc}`;
         
-        this.api.post("postjob", data)
-        .then(res => {
-            this.setState({ 
-                item: '', 
-                subItem: '', 
-                title: '', 
-                jobDesc: '', 
-                date: '', 
-                time: '',
-                subItems: null 
-            });
+        // this.api.post("postjob", data)
+        // .then(res => {
+        //     this.setState({ 
+        //         item: '', 
+        //         subItem: '', 
+        //         title: '', 
+        //         jobDesc: '', 
+        //         date: '', 
+        //         time: '',
+        //         subItems: null 
+        //     });
 
-            Alert.alert("Success", "Your Job has been posted succesfully");
+        //     Alert.alert("Success", "Your Job has been posted succesfully");
+        // });
+        this.props.navigation.navigate("JobScreen", {
+            item: s.item, 
+            subItem: s.subItem, 
+            user: 1,
+            jobDesc: '', 
+            date: s.date, 
+            time: s.time,
         });
     }
 
@@ -169,12 +178,12 @@ class PostJobScreen extends React.Component <any, IPostJobState> {
 
         { this.renderSubItemPicker() }
 
-        <TextInput
+        {/* <TextInput
           placeholder="Title Of Job"
           style={styles.title}
           onChangeText={(title) => this.setState({title})}
           value={this.state.title}
-        />
+        /> */}
 
       <TouchableOpacity onPress={() => this.datePicker()}>
         <TextInput
@@ -204,7 +213,7 @@ class PostJobScreen extends React.Component <any, IPostJobState> {
           value={this.state.jobDesc}
       />
 
-      <Button onPress={this.submit} title="Submit"></Button>
+      <Button onPress={this.submit} title="Search"></Button>
       </View>
         );
     }

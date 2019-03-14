@@ -1,72 +1,288 @@
-import React from 'react'
+import React from "react";
 
-import { createBottomTabNavigator, createAppContainer } from 'react-navigation'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
-import HeaderButtons from "react-navigation-header-buttons"
-import { HeaderButton } from 'react-navigation-header-buttons'
-import { NavigationScreenProps } from "react-navigation/index"
-import { Params }  from "../../interfaces"
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-import { ServicesNavigator } from './ServicesScreen'
-import PostJobScreen from './PostJobScreen';
+import Icon from "react-native-vector-icons/Ionicons";
 
-import { IThoseProps } from "../../interfaces"
+import HeaderButtons from "react-navigation-header-buttons";
+import { HeaderButton } from "react-navigation-header-buttons";
+import { NavigationScreenProps } from "react-navigation/index";
+import { Params } from "../../interfaces";
+
+
+import { View, StyleSheet, Picker, TextInput, DatePickerAndroid, Button,
+        TouchableOpacity,TimePickerAndroid,StatusBar, Alert 
+} from 'react-native';
+
+import { IPostJobState } from "../../interfaces/index";
+
+import { Api } from '../../utils/Api';
 
 const MaterialHeaderButton = (props: any) => (
-  <HeaderButton {...props} IconComponent={MaterialIcons} iconSize={23} color="white" />
+  <HeaderButton
+    {...props}
+    IconComponent={MaterialIcons}
+    iconSize={23}
+    color="white"
+  />
 );
 
-const TabNavigator = createBottomTabNavigator(
-  {
-    Services: ServicesNavigator,
-    PostJob: PostJobScreen,
-  },
+export class Home extends React.Component <any, IPostJobState> {
+    api: Api = new Api();
 
-  {
-    defaultNavigationOptions: ({ navigation }) => ({
-      tabBarIcon: (args: any) => {
-        const { routeName } = navigation.state;
-        let iconName: string;
-        if (routeName === 'Services') {
-          iconName = `ios-add-circle-outline`;
-        } else if (routeName === 'PostJob') {
-          iconName = `ios-airplane`;
-        } else {
-          iconName=`ios-airplane`;
+    static navigationOptions = ({navigation}: NavigationScreenProps<Params>) => ({
+        title: "Home",
+        headerLeft: (
+          <HeaderButtons left HeaderButtonComponent={MaterialHeaderButton}>
+            <HeaderButtons.Item
+              title="hello"
+              iconName="menu"
+              onPress={() => navigation.toggleDrawer()}
+            />
+          </HeaderButtons>
+        ),
+      });
+
+    constructor(props: any) {
+        super(props);
+
+        this.state = { 
+            item: '', 
+            subItem: '', 
+            title: '', 
+            jobDesc: '', 
+            date: '', 
+            time: '', 
+            items: [], 
+            subItems: null 
+        };
+
+        const didBlurSubscription = this.props.navigation.addListener(
+          'didFocus', (payload: any) => {
+            this.startUp()
+          }
+        );
+    }
+
+    startUp() {
+        const { navigation } = this.props;
+        const jobID = navigation.getParam('jobid', null);
+        const subJobID = navigation.getParam('subjobid', null);
+
+        // If the jobID is passed initiate get services and make sure the item is set to the sent id
+        if(jobID !== null) {
+
+            this.api.post("getservices")
+            .then((res: any) => {
+                this.api.post("getsubservices", `jobid=${jobID}`)
+                .then((res2: any) => {
+                    this.setState({ 
+                        items: res, 
+                        item: jobID, 
+                        subItem: subJobID, 
+                        subItems: res2 
+                    });
+                });
+            });
+
+        } else 
+        // If the jobID is not passed so start from the beginning with fetching the list
+        {
+            this.api.post("getservices")
+            .then((res: any) => {
+                this.setState({ items: res });
+            });
         }
-        // You can return any component that you like here! We usually use an
-        // icon component from react-native-vector-icons
-        return <Ionicons name={iconName} size={args.horizontal ? 20 : 25} />;
-      },
-    }),
-    tabBarOptions: {
-      activeTintColor: '#3700B3',
-      inactiveTintColor: 'gray',
-    },
-  }
-);
+    }
 
-class Home extends React.Component<any, any> {
-  static navigationOptions = ({navigation}: NavigationScreenProps<Params>) => ({
-    title: "Home",
-    headerLeft: (
-      <HeaderButtons left HeaderButtonComponent={MaterialHeaderButton}>
-        <HeaderButtons.Item
-          title="hello"
-          iconName="menu"
-          onPress={() => navigation.toggleDrawer()}
+    async datePicker() {
+        try {
+            const { action, year, month, day } = await DatePickerAndroid.open({
+                date: new Date(2020, 4, 25) // Enter the start date
+            });
+            if (action !== DatePickerAndroid.dismissedAction) {
+                // Selected year, month (0-11), day
+                this.setState({ date: `${year}-${month}-${day}` });
+            }
+        } catch ({ code, message }) {
+            console.warn('Cannot open date picker', message);
+        }
+    }
+
+
+    async timepicker() {
+        try {
+            const { action, hour, minute } = await TimePickerAndroid.open({
+                hour: 14,
+                minute: 0,
+                is24Hour: false, // Will display '2 PM'
+            });
+            let min: string = String(minute);
+            if(min.length < 2 ) min += "0";
+            if (action !== TimePickerAndroid.dismissedAction) {
+                this.setState({ time: `${hour}:${min}` });
+            }
+        } catch ({ code, message }) {
+            console.warn('Cannot open time picker', message);
+        }
+    }
+
+    onItemValueChanged = (itemValue: any) => {
+        if(!itemValue || this.state.item == itemValue) return; 
+        this.setState({item: itemValue});
+        this.api.post("getsubservices", `jobid=${itemValue}`)
+        .then((res: any) => {
+            this.setState({subItems: res});
+        });
+    }
+
+    renderItemPicker = () => {
+        const Items = this.state.items.map(
+            (item: any, i: any) => <Picker.Item key={i} label={item.name} value={item.id} />
+        );
+
+        return (
+            <Picker
+              selectedValue={this.state.item}
+              style={styles.categoryPicker}
+              onValueChange={this.onItemValueChanged}>
+               <Picker.Item label="Select Category" value="" />
+               { Items }
+            </Picker>
+        );
+    }
+
+    renderSubItemPicker = () => {
+        if(this.state.subItems == null) {
+            return null;
+        }
+        const Items = this.state.subItems.map(
+            (item: any, i: any) => <Picker.Item key={i} label={item.name} value={item.id} />
+        );
+
+        return (
+            <Picker
+              selectedValue={this.state.subItem}
+              style={styles.categoryPicker}
+              onValueChange={(itemValue) => this.setState({subItem: itemValue})}>
+              <Picker.Item label="Select Category" value="" />
+              { Items }
+            </Picker>
+        );
+    }
+
+    submit = () => {
+        const s = this.state;
+        const data = `item=${s.item}&subitem=${s.subItem}&title=${s.title}&date=${s.date}&time=${s.time}&desc=${s.jobDesc}`;
+        
+        // this.api.post("postjob", data)
+        // .then(res => {
+        //     this.setState({ 
+        //         item: '', 
+        //         subItem: '', 
+        //         title: '', 
+        //         jobDesc: '', 
+        //         date: '', 
+        //         time: '',
+        //         subItems: null 
+        //     });
+
+        //     Alert.alert("Success", "Your Job has been posted succesfully");
+        // });
+        if(s.item === '' || s.subItem==='') {
+            alert("Enter real values");
+            return;
+        }
+        this.props.navigation.navigate("JobScreen", {
+            item: s.item, 
+            subItem: s.subItem, 
+            user: 1,
+            jobDesc: '', 
+            date: s.date, 
+            time: s.time,
+        });
+    }
+
+    render() {
+        return (
+        <View style={styles.root}>
+        <StatusBar backgroundColor="#3700B3" barStyle="light-content"></StatusBar>
+
+        { this.renderItemPicker() }
+
+        { this.renderSubItemPicker() }
+
+        {/* <TextInput
+          placeholder="Title Of Job"
+          style={styles.title}
+          onChangeText={(title) => this.setState({title})}
+          value={this.state.title}
+        /> */}
+
+      <TouchableOpacity onPress={() => this.datePicker()}>
+        <TextInput
+            placeholder="Select Date"
+            placeholderTextColor="grey"
+            editable={false}
+            style={styles.title}
+            value={this.state.date}
         />
-      </HeaderButtons>
-    ),
-  });
+      </TouchableOpacity>
 
-  render() {
-  	let AppContainer  = createAppContainer(TabNavigator);
-    return <AppContainer  />;
-  }
+       <TouchableOpacity onPress={() => this.timepicker()}>
+        <TextInput
+            placeholder="Select Time"
+            placeholderTextColor="grey"
+            editable={false}
+            style={styles.title}
+            value={this.state.time}
+        />
+      </TouchableOpacity>
+
+       <TextInput
+          placeholder="Describe you job requirement"
+          multiline={true}
+          style={styles.jobDesc}
+          onChangeText={(jobDesc) => this.setState({ jobDesc })}
+          value={this.state.jobDesc}
+      />
+
+      <Button onPress={this.submit} title="Search"></Button>
+      </View>
+        );
+    }
 }
 
-
-export default Home;
+const styles = StyleSheet.create({
+    root: {
+        marginTop: 5,
+        paddingLeft: 15,
+        paddingRight: 15
+    },
+    categoryPicker: {
+        height: 70,
+        width: '100%',
+        borderWidth: 1,
+        borderColor: 'gray',
+    },
+    title: {
+        fontSize: 17,
+        padding: 7,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        width: '100%',
+        marginBottom: 10
+    },
+    jobDesc: {
+        fontSize: 17,
+        padding: 7,
+        textAlignVertical: "top",
+        height: 150,
+        borderColor: 'gray',
+        borderWidth: 1,
+        width: '100%',
+        marginBottom: 10,
+    }
+});

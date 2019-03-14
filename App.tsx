@@ -2,7 +2,7 @@ import React from 'react'
 import { createDrawerNavigator, createAppContainer, createStackNavigator } from 'react-navigation'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
-import Home from './screens/home'
+import { Home } from './screens/home'
 import Posted from './screens/posted'
 import Profile from './screens/profile'
 import { Job } from './screens/job'
@@ -106,7 +106,7 @@ const TabsInDrawer = createDrawerNavigator({
 },
 
 {
-  "initialRouteName": "PostedScreen"
+  "initialRouteName": "HomeScreen"
 });
 
 export default createAppContainer(TabsInDrawer);

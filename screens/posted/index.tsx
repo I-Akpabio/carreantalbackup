@@ -92,7 +92,7 @@ class Posted extends React.Component<any, any> {
         <FlatList
           data={this.state.data}
           renderItem={({item}) => this.renderItem(item)}
-          keyExtractor={(item, index) => item.toString()}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     );
